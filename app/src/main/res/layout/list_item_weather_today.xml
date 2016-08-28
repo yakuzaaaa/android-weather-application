@@ -55,6 +55,7 @@
             android:id="@+id/list_item_weather_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="transitionName"
             tools:src="@drawable/art_clear"/>
 
         <TextView

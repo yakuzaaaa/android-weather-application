@@ -5,6 +5,9 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
+import com.example.nilarnab.mystats.App;
+import com.example.nilarnab.mystats.R;
+
 /**
  * Created by nilarnab on 14/8/16.
  */

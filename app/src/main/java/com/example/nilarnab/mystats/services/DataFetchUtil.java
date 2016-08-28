@@ -1,16 +1,13 @@
-package com.example.nilarnab.mystats.background;
+package com.example.nilarnab.mystats.services;
 
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.nilarnab.mystats.App;
 import com.example.nilarnab.mystats.Constants;
-import com.example.nilarnab.mystats.events.WeatherFetchedEvent;
+import com.example.nilarnab.mystats.utility.Utility;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
-import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -21,11 +18,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by nilarnab on 4/8/16.
+ * Created by nilarnab on 27/8/16 and it is made of each and everyone of you people to see, judge and advice :-).
  */
-public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
-    public static final int DAYS_COUNT = 14;
-
+public class DataFetchUtil {
     private static final String REQUEST_SCHEME = "http";
     private static final String BASE_URL = "api.openweathermap.org";
     private static final String PATH_DATA = "data";
@@ -39,9 +34,12 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
     private static final String FORMAT_JSON = "json";
     private static final String PATH_DAILY = "daily";
 
-    @Override
-    protected Void doInBackground(String... strings) {
+    public static void fetchDataNow() {
+        String units = Utility.getPreferredUnit();
+        String location = Utility.getPreferredLocation();
+
         String resultJSON = "";
+
         HttpURLConnection connection = null;
         BufferedReader br = null;
 
@@ -53,10 +51,10 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                         .appendEncodedPath(PATH_VERSION)
                         .appendEncodedPath(PATH_FORECAST)
                         .appendEncodedPath(PATH_DAILY)
-                        .appendQueryParameter(QUERY_PIN_CODE, strings[0])
+                        .appendQueryParameter(QUERY_PIN_CODE,location)
                         .appendQueryParameter(QUERY_MODE_FORMAT, FORMAT_JSON)
-                        .appendQueryParameter(QUERY_DAYS_COUNT, String.valueOf(DAYS_COUNT))
-                        .appendQueryParameter(QUERY_UNIT, strings[1])
+                        .appendQueryParameter(QUERY_DAYS_COUNT, String.valueOf(Constants.DAYS_COUNT))
+                        .appendQueryParameter(QUERY_UNIT, units)
                         .appendQueryParameter(QUERY_API_KEY, Constants.OPEN_WEATHER_API_KEY)
                         .build();
         Log.d(App.TAG, uri.toString());
@@ -106,22 +104,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        Toast.makeText(App.getAppContext(), "Refreshed", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    protected void onCancelled() {
-        super.onCancelled();
-        WeatherFetchedEvent event = new WeatherFetchedEvent();
-        event.setSuccess(false);
-
-        EventBus.getDefault().postSticky(event);
-    }
 }

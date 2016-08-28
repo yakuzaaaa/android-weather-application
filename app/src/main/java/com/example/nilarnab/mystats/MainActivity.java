@@ -1,25 +1,29 @@
 package com.example.nilarnab.mystats;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
-import com.example.nilarnab.mystats.background.FetchWeatherTask;
 import com.example.nilarnab.mystats.fragments.WeatherDetailsFragment;
 import com.example.nilarnab.mystats.fragments.WeatherForecastFragment;
+import com.example.nilarnab.mystats.sync.SyncAdapter;
 import com.example.nilarnab.mystats.utility.Utility;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements WeatherForecastFragment.listener {
     private static final String FORECAST_FRAGMENT = WeatherForecastFragment.class.getSimpleName();
 
     private boolean mTwoPaneMode = false;
-    private FetchWeatherTask mWeatherFetchTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +36,14 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_container, WeatherForecastFragment.newInstance(), FORECAST_FRAGMENT)
                 .commit();
+
         if (findViewById(R.id.details_activity_container) != null) {
             mTwoPaneMode = true;
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.details_activity_container, WeatherDetailsFragment.newInstance(null))
-                    .commit();
+            if(savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.details_activity_container, WeatherDetailsFragment.newInstance(null))
+                        .commit();
+            }
         } else {
             mTwoPaneMode = false;
         }
@@ -64,29 +71,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (item.getItemId() == R.id.action_refresh) {
-            if (mWeatherFetchTask == null) {
-                executeNewTask();
-            } else {
-                mWeatherFetchTask.cancel(false);
-                if (mWeatherFetchTask.isCancelled()) {
-                    executeNewTask();
-                }
-            }
+            SyncAdapter.initWeatherSync();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void executeNewTask() {
-        mWeatherFetchTask = new FetchWeatherTask();
-        String pinCode = Utility.getPreferredLocation();
-        String unit = Utility.getPreferredUnit();
-        if (pinCode != null || unit != null) {
-            mWeatherFetchTask.execute(pinCode, unit);
-        } else {
-            Toast.makeText(this, "General weather settings error", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
@@ -97,10 +86,7 @@ public class MainActivity extends AppCompatActivity
                             WeatherDetailsFragment.newInstance(uri.toString()))
                     .commit();
         } else {
-            Intent intent = new Intent(this, DetailsActivity.class)
-                    .setData(uri);
-            intent.setAction(DetailsActivity.ACTION_WEATHER);
-            startActivity(intent);
+            startActivity(Utility.getWeatherDetailsIntent(uri));
         }
     }
 }

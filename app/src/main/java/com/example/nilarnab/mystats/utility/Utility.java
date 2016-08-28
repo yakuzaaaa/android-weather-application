@@ -1,5 +1,7 @@
 package com.example.nilarnab.mystats.utility;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -7,11 +9,14 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.widget.Toast;
 
 import com.example.nilarnab.mystats.App;
+import com.example.nilarnab.mystats.Constants;
+import com.example.nilarnab.mystats.DetailsActivity;
 import com.example.nilarnab.mystats.R;
 
 /**
@@ -170,5 +175,24 @@ public class Utility {
 
     public static String getPreferredUnit() {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
+    }
+
+    public static Notification showWeatherNotification(CharSequence text, Uri uri) {
+        NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
+        notifBuilder.setContentText(text);
+        notifBuilder.setSmallIcon(R.mipmap.ic_launcher);
+
+//        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE,getWeatherDetailsIntent(uri),
+//                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        return notifBuilder.build();
+    }
+
+    public static Intent getWeatherDetailsIntent(Uri uri) {
+        Intent intent = new Intent(context, DetailsActivity.class);
+        intent.setData(uri);
+        intent.setAction(DetailsActivity.ACTION_WEATHER);
+
+        return intent;
     }
 }

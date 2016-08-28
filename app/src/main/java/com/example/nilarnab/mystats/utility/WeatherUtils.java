@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import com.example.nilarnab.mystats.App;
+import com.example.nilarnab.mystats.Constants;
 import com.example.nilarnab.mystats.R;
-import com.example.nilarnab.mystats.background.FetchWeatherTask;
 import com.example.nilarnab.mystats.database.WeatherContract;
 
 import org.json.JSONArray;
@@ -24,7 +24,6 @@ import java.util.Vector;
  * Created by nilarnab on 6/8/16.
  */
 public class WeatherUtils {
-    public static final String DATE_FORMAT = "yyyyMMdd";
     private static final String KEY_LIST = "list";
     private static final String KEY_DT = "dt";
     private static final String KEY_TEMP = "temp";
@@ -83,7 +82,7 @@ public class WeatherUtils {
         JSONArray dayDetailsList = mainObject.getJSONArray(KEY_LIST);
         Vector<ContentValues> vector = new Vector<>();
 
-        for (int i = 0; i < FetchWeatherTask.DAYS_COUNT; i++) {
+        for (int i = 0; i < Constants.DAYS_COUNT; i++) {
             JSONObject day = dayDetailsList.getJSONObject(i);
 
             JSONObject temp = day.getJSONArray(KEY_WEATHER).getJSONObject(0);

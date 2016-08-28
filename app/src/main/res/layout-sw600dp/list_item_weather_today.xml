@@ -20,6 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
+            android:transitionName="transitionName"
             app:srcCompat="@drawable/ic_sunny_48dp"
             tools:src="@drawable/ic_sunny_48dp"/>
     </FrameLayout>
