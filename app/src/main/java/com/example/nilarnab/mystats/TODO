@@ -1,4 +1,4 @@
 TODO introduce more utility funtions
-TODO use the location service created to same the weather task smarter and dynamic
+TODO use the location service created to make the weather task smarter and dynamic
+TODO introduce shared element transitions
 
-TODO find a way to asynchronously parse the json

@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,10 @@ import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.database.WeatherContract;
 import com.example.nilarnab.mystats.services.DataFetchUtil;
 import com.example.nilarnab.mystats.utility.Utility;
+import com.example.nilarnab.mystats.utility.WeatherUtils;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * Created by nilarnab on 27/8/16 and it is made of each and everyone of you people to see, judge and advice :-).
@@ -31,14 +36,14 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
             WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID,
             WeatherContract.WeatherTable.COLUMN_CONDITION,
+            WeatherContract.WeatherTable._ID
     };
 //    private static final String SELECTION = WeatherContract.WeatherTable.
 
     // these indices must match the projection
-    private static final int INDEX_WEATHER_ID = 0;
-    private static final int INDEX_MAX_TEMP = 1;
-    private static final int INDEX_MIN_TEMP = 2;
-    private static final int INDEX_SHORT_DESC = 3;
+    private static final int INDEX_WEATHER_CONDITION_ID = 0;
+    private static final int INDEX_SHORT_DESC = 1;
+    private static final int INDEX_ID = 2;
 
     ContentResolver mContentResolver;
 
@@ -67,23 +72,25 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         DataFetchUtil.fetchDataNow();
         String locationSetting = Utility.getPreferredLocation();
         String contentText = "Just Updated WEather, Cahnge me to be more specific";
-//        Uri weatherUri =
-//                WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(locationSetting, System.currentTimeMillis());
-//        Cursor cursor = getContext().getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
-//
-//        if (cursor.moveToFirst()) {
-//            int weatherId = cursor.getInt(INDEX_WEATHER_ID);
-//            double high = cursor.getDouble(INDEX_MAX_TEMP);
-//            double low = cursor.getDouble(INDEX_MIN_TEMP);
-//            String desc = cursor.getString(INDEX_SHORT_DESC);
-//
-//            int iconId = Utility.getIconResourceForWeatherCondition(weatherId);
-//            Resources resources = context.getResources();
-//            Bitmap largeIcon = BitmapFactory.decodeResource(resources,
-//                    Utility.getArtResourceForWeatherCondition(weatherId));
-//            String title = context.getString(R.string.app_name);
+        Uri weatherUri =
+                WeatherContract.WeatherTable.buildWeatherWithLocationUri(locationSetting);
+        Calendar tomorrow = new GregorianCalendar();
+        tomorrow.add(Calendar.DAY_OF_MONTH,1);
+        //this gives time for tomorrow
+        String selection = WeatherContract.WeatherTable.COLUMN_DATE + " < "+tomorrow.getTimeInMillis();
+        Cursor cursor = getContext().getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
 
-        Utility.showWeatherNotification(contentText, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int weatherId = cursor.getInt(INDEX_WEATHER_CONDITION_ID);
+            String desc = cursor.getString(INDEX_SHORT_DESC);
+
+            int iconId = WeatherUtils.getIconResourceForWeatherCondition(weatherId);
+            Resources resources = getContext().getResources();
+            Bitmap largeIcon = BitmapFactory.decodeResource(resources,
+                    WeatherUtils.getArtResourceForWeatherCondition(weatherId));
+            String title = getContext().getString(R.string.app_name);
+            Utility.showWeatherNotification(contentText, null,9L);
+        }
     }
 
     private static void performImmediateSync() {

@@ -1,7 +1,6 @@
 package com.example.nilarnab.mystats.utility;
 
-import android.app.Notification;
-import android.app.PendingIntent;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +14,6 @@ import android.text.Html;
 import android.widget.Toast;
 
 import com.example.nilarnab.mystats.App;
-import com.example.nilarnab.mystats.Constants;
 import com.example.nilarnab.mystats.DetailsActivity;
 import com.example.nilarnab.mystats.R;
 
@@ -177,7 +175,7 @@ public class Utility {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
     }
 
-    public static Notification showWeatherNotification(CharSequence text, Uri uri) {
+    public static void showWeatherNotification(CharSequence text, Uri uri, long id) {
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
         notifBuilder.setContentText(text);
         notifBuilder.setSmallIcon(R.mipmap.ic_launcher);
@@ -185,7 +183,10 @@ public class Utility {
 //        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE,getWeatherDetailsIntent(uri),
 //                PendingIntent.FLAG_UPDATE_CURRENT);
 
-        return notifBuilder.build();
+
+        NotificationManager manager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify((int) id, notifBuilder.build());
     }
 
     public static Intent getWeatherDetailsIntent(Uri uri) {
