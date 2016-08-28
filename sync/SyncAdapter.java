@@ -24,26 +24,29 @@ import com.example.nilarnab.mystats.utility.Utility;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
  * Created by nilarnab on 27/8/16 and it is made of each and everyone of you people to see, judge and advice :-).
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    private static final long SYNC_INTERVAL_SECONDS = 5 * 3600;// * 3600 * 3;
+    private static final long SYNC_INTERVAL_SECONDS = 5 * 3600 ;// * 3600 * 3;
     private static final long FLEX_INTERVAL_SECONDS = 3 * 3600;//* 3600 * 2;
 
-    private static final String[] NOTIFY_WEATHER_PROJECTION = new String[] {
-            WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID,
+    private static final String[] FORECAST_COLUMNS = {
+            WeatherContract.WeatherTable.TABLE_NAME + "." + WeatherContract.WeatherTable._ID,
             WeatherContract.WeatherTable.COLUMN_CONDITION,
-            WeatherContract.WeatherTable._ID
+            WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID,
+            WeatherContract.WeatherTable.COLUMN_DATE,
     };
 //    private static final String SELECTION = WeatherContract.WeatherTable.
 
     // these indices must match the projection
-    private static final int INDEX_WEATHER_CONDITION_ID = 0;
+    private static final int INDEX_ID = 0;
     private static final int INDEX_SHORT_DESC = 1;
-    private static final int INDEX_ID = 2;
+    private static final int INDEX_WEATHER_CONDITION_ID = 2;
+    private static final int INDEX_DATE = 3;
 
     ContentResolver mContentResolver;
 
@@ -67,42 +70,15 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         mContentResolver = context.getContentResolver();
     }
 
-    @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        DataFetchUtil.fetchDataNow();
-        String locationSetting = Utility.getPreferredLocation();
-        String contentText = "Just Updated WEather, Cahnge me to be more specific";
-        Uri weatherUri =
-                WeatherContract.WeatherTable.buildWeatherWithLocationUri(locationSetting);
-        Calendar tomorrow = new GregorianCalendar();
-        tomorrow.add(Calendar.DAY_OF_MONTH,1);
-        //this gives time for tomorrow
-        String selection = WeatherContract.WeatherTable.COLUMN_DATE + " < "+tomorrow.getTimeInMillis();
-        Cursor cursor = getContext().getContentResolver().query(weatherUri, NOTIFY_WEATHER_PROJECTION, null, null, null);
-
-        if (cursor != null && cursor.moveToFirst()) {
-            int weatherId = cursor.getInt(INDEX_WEATHER_CONDITION_ID);
-            String desc = cursor.getString(INDEX_SHORT_DESC);
-
-            int iconId = WeatherUtils.getIconResourceForWeatherCondition(weatherId);
-            Resources resources = getContext().getResources();
-            Bitmap largeIcon = BitmapFactory.decodeResource(resources,
-                    WeatherUtils.getArtResourceForWeatherCondition(weatherId));
-            String title = getContext().getString(R.string.app_name);
-            Utility.showWeatherNotification(contentText, null,9L);
-        }
-    }
-
-    private static void performImmediateSync() {
+    private static void performImmediateSync(Account account) {
         Bundle bundle = new Bundle();
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         bundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        ContentResolver.requestSync(getSyncAccount(),
+        ContentResolver.requestSync(account,
                 App.getAppContext().getString(R.string.weather_content_authority), bundle);
     }
 
-    private static void startPeriodicSync() {
-        Account account = getSyncAccount();
+    private static void startPeriodicSync(Account account) {
         String authority = App.getAppContext().getString(R.string.weather_content_authority);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             // we can enable inexact timers in our periodic sync
@@ -136,11 +112,13 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             onAccountCreated(account);
         }
 
+        startPeriodicSync(account);
+
         return account;
     }
 
     private static void onAccountCreated(Account account) {
-        startPeriodicSync();
+        startPeriodicSync(account);
 
         ContentResolver
                 .setSyncAutomatically(
@@ -149,10 +127,52 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         true
                 );
 
-        performImmediateSync();
+        performImmediateSync(account);
     }
 
     public static void initWeatherSync() {
         getSyncAccount();
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        DataFetchUtil.fetchDataNow();
+        String locationSetting = Utility.getPreferredLocation();
+
+        Calendar tempUtilcalendar = new GregorianCalendar();
+        tempUtilcalendar.add(Calendar.DAY_OF_MONTH,1);
+        //this gives time for tomorrow
+        String selection = WeatherContract.WeatherTable.COLUMN_DATE + " < "+tempUtilcalendar.getTimeInMillis();
+        Uri weatherUri = WeatherContract.WeatherTable.buildWeatherWithLocationAndDateUri(locationSetting,tempUtilcalendar.getTimeInMillis());
+        Cursor cursor = getContext().getContentResolver().query(weatherUri, FORECAST_COLUMNS, selection, null, null);
+
+         if (cursor != null && cursor.moveToFirst()) {
+            int weatherId = cursor.getInt(INDEX_WEATHER_CONDITION_ID);
+            String desc = cursor.getString(INDEX_SHORT_DESC);
+
+            Resources resources = getContext().getResources();
+            Bitmap largeIcon = BitmapFactory.decodeResource(resources,
+                    WeatherUtils.getArtResourceForWeatherCondition(weatherId));
+            String title = getContext().getString(R.string.app_name);
+            Utility.showWeatherNotification(
+                    desc,
+                    largeIcon,
+                    WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(locationSetting,cursor.getInt(INDEX_DATE)),
+                    cursor.getInt(INDEX_WEATHER_CONDITION_ID),
+                    title);
+            cursor.close();
+        }
+
+        //Now Lets remove data which are like two weeks or so old
+        tempUtilcalendar = new GregorianCalendar();
+        tempUtilcalendar.setTime(new Date());
+        //time in millis for two days
+        long twoDays = 1000 * 3600 * 48;
+
+        getContext().getContentResolver().delete(
+                WeatherContract.WeatherTable.CONTENT_URI,
+                WeatherContract.WeatherTable.COLUMN_DATE + " < ?",
+                new String[]{String.valueOf(tempUtilcalendar.getTimeInMillis() - twoDays)}
+        );
     }
 }

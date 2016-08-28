@@ -1,20 +1,26 @@
 package com.example.nilarnab.mystats.utility;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
 import android.widget.Toast;
 
 import com.example.nilarnab.mystats.App;
+import com.example.nilarnab.mystats.Constants;
 import com.example.nilarnab.mystats.DetailsActivity;
+import com.example.nilarnab.mystats.MainActivity;
 import com.example.nilarnab.mystats.R;
 
 /**
@@ -175,14 +181,23 @@ public class Utility {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
     }
 
-    public static void showWeatherNotification(CharSequence text, Uri uri, long id) {
+    public static void showWeatherNotification(CharSequence text, Bitmap largeIcon, Uri uri, long id, CharSequence title) {
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
+        notifBuilder.setContentTitle(title);
         notifBuilder.setContentText(text);
-        notifBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        notifBuilder.setSmallIcon(R.drawable.ic_stat_name);
 
-//        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE,getWeatherDetailsIntent(uri),
-//                PendingIntent.FLAG_UPDATE_CURRENT);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notifBuilder.setLargeIcon(largeIcon);
+        }
 
+        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE,getWeatherDetailsIntent(uri),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(MainActivity.class);
+
+        notifBuilder.setContentIntent(resultIntent);
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

@@ -5,9 +5,6 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.example.nilarnab.mystats.App;
-import com.example.nilarnab.mystats.R;
-
 /**
  * Created by nilarnab on 14/8/16.
  */
@@ -89,6 +86,10 @@ public class WeatherContract {
 
         public static String getLocationFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
+        }
+
+        public static long getDateFromPath(Uri uri) {
+            return Long.parseLong(uri.getLastPathSegment());
         }
     }
 
