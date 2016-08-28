@@ -27,12 +27,12 @@ public class WeatherProvider extends ContentProvider {
             WeatherContract.LocationTable.TABLE_NAME +
                     "." + WeatherContract.LocationTable.COLUMN_LOCATION_SETTINGS + " = ? ";
     //location.location_setting = ? AND date >= ?
-    private static final String sLocationSettingWithStartDateSelection =
+    private static final String sLocationSettingWithTomorrowDateSelection =
             WeatherContract.LocationTable.TABLE_NAME +
                     "." + WeatherContract.LocationTable.COLUMN_LOCATION_SETTINGS + " = ? AND " +
-                    WeatherContract.WeatherTable.COLUMN_DATE + " >= ? ";
+                    WeatherContract.WeatherTable.COLUMN_DATE + " < ? ";
     //location.location_setting = ? AND date = ?
-    private static final String sLocationSettingAndDaySelection =
+    private static final String sLocationAndSelectedDate =
             WeatherContract.LocationTable.TABLE_NAME +
                     "." + WeatherContract.LocationTable.COLUMN_LOCATION_SETTINGS + " = ? AND " +
                     WeatherContract.WeatherTable.COLUMN_DATE + " = ? ";
@@ -77,7 +77,7 @@ public class WeatherProvider extends ContentProvider {
         Cursor resultCursor;
         switch (mMatcher.match(uri)) {
             case WEATHER_WITH_LOCATION_AND_DATE: {
-                resultCursor = getWeatherByLocationAndStartDate(uri, projection, sortOrder);
+                resultCursor = getTodaysWeather(uri, projection, sortOrder);
                 break;
             }
             case WEATHER_WITH_LOCATION: {
@@ -121,7 +121,7 @@ public class WeatherProvider extends ContentProvider {
         long startDate = WeatherContract.WeatherTable.getStartDateFromUri(uri);
 
         if (startDate > 0) {
-            selection = sLocationSettingAndDaySelection;
+            selection = sLocationAndSelectedDate;
             selectionArgs = new String[]{locationSettings, String.valueOf(startDate)};
         }
 
@@ -134,10 +134,10 @@ public class WeatherProvider extends ContentProvider {
                 sortOrder);
     }
 
-    private Cursor getWeatherByLocationAndStartDate(Uri uri, String[] projection, String sortOrder) {
+    private Cursor getTodaysWeather(Uri uri, String[] projection, String sortOrder) {
         String locationSettings = WeatherContract.WeatherTable.getLocationFromUri(uri);
-        String selection = sLocationSettingAndDaySelection;
-        long startDate = WeatherContract.WeatherTable.getStartDateFromUri(uri);
+        String selection = sLocationSettingWithTomorrowDateSelection;
+        long startDate = WeatherContract.WeatherTable.getDateFromPath(uri);
         String selectionArgs[] = new String[]{locationSettings, String.valueOf(startDate)};
 
         return mQueryBuilder.query(mDataBaseHelper.getReadableDatabase(),
@@ -211,7 +211,7 @@ public class WeatherProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
         // Because a null deletes all rows
-        if (rowsDeleted != 0) {
+        if (rowsDeleted != 0 && getContext() != null) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return rowsDeleted;
