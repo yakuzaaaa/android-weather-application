@@ -1,123 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 xmlns:tools="http://schemas.android.com/tools"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v7.widget.GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:background="@android:color/white"
+        app:columnCount="2">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:orientation="vertical">
+        <android.support.v7.widget.Space
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"/>
 
-            <TextView
-                android:id="@+id/date_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAllCaps="true"
-                tools:text="Today, june 24"/>
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/black"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill_horizontal"
+            tools:text="Today, April 03"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="20dp"
-                android:baselineAligned="false"
-                android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/weather_icon_view"
+            android:layout_width="0dp"
+            android:adjustViewBounds="true"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill_horizontal"
+            tools:src="@drawable/art_clouds"/>
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingBottom="16dp"
-                    android:paddingTop="16dp">
+        <TextView
+            android:id="@+id/tv_max_temp"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:textSize="72sp"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill_horizontal"
+            tools:text="19"/>
 
-                    <TextView
-                        android:id="@+id/max_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center"
-                        android:textSize="45sp"
-                        tools:text="21"/>
+        <TextView
+            android:id="@+id/tv_weather_desc"
+            android:layout_width="0dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/black"
+            app:layout_columnWeight="1"
+            tools:text="Rainy"/>
 
-                    <TextView
-                        android:id="@+id/min_temp_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginTop="16dp"
-                        android:gravity="center"
-                        android:textSize="40sp"
-                        tools:text="8"/>
-                </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_min_temp"
+            android:layout_width="0dp"
+            android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:textSize="36sp"
+            app:layout_columnWeight="1"
+            tools:text="10"/>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
+        <android.support.v7.widget.Space
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"/>
 
-                    <ImageView
-                        android:id="@+id/weather_icon_view"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:transitionName="transitionName"
-                        tools:src="@drawable/art_clear"/>
+    </android.support.v7.widget.GridLayout>
 
-                    <TextView
-                        android:id="@+id/weather_desc_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="22sp"
-                        tools:text="clear"/>
-                </LinearLayout>
-            </LinearLayout>
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/details_additional_pane"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="@color/colorAccent"
+        android:padding="16dp"
+        app:columnCount="2">
 
-            <TextView
-                android:id="@+id/humidity_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                tools:text="HUMIDITY: 84%"/>
+        <android.support.v7.widget.Space
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"/>
 
-            <TextView
-                android:id="@+id/wind_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                tools:text="WIND: 6km/H NW"/>
+        <TextView
+            android:id="@+id/tv_humidity_label"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/humidity"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"
+            tools:text="Humidity"/>
 
-            <TextView
-                android:id="@+id/pressure_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:gravity="center"
-                tools:text="PRESSURE: 1024 hpa"/>
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+        <TextView
+            android:id="@+id/tv_humidity"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="@string/humidity"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"/>
 
+        <TextView
+            android:id="@+id/tv_wind_label"
+            android:layout_width="wrap_content"
+            android:text="@string/wind_speed"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"/>
+
+        <TextView
+            android:id="@+id/tv_wind"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"
+            tools:text="100"/>
+
+        <TextView
+            android:id="@+id/tv_pressure_label"
+            android:layout_height="wrap_content"
+            android:text="@string/pressure"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"/>
+
+        <TextView
+            android:id="@+id/tv_pressure"
+            android:layout_height="wrap_content"
+            android:text="@string/pressure"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_rowWeight="1"/>
+
+    </android.support.v7.widget.GridLayout>
+
+    <!-- gone for now -->
+    <!-- gone for now -->
+    <!-- gone for now -->
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_share_weather_details"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
+        android:visibility="gone"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_share_white_24dp"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

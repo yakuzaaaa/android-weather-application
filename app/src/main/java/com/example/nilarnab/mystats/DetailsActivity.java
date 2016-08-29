@@ -1,5 +1,6 @@
 package com.example.nilarnab.mystats;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ public class DetailsActivity extends AppCompatActivity {
         if (getIntent().getAction() != null) {
             checkAction(getIntent());
         }
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(Constants.APP_NOTIFICATION_ID);
     }
 
     private void checkAction(Intent intent) {

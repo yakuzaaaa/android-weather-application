@@ -181,7 +181,7 @@ public class Utility {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
     }
 
-    public static void showWeatherNotification(CharSequence text, Bitmap largeIcon, Uri uri, long id, CharSequence title) {
+    public static void showWeatherNotification(CharSequence text, Bitmap largeIcon, Uri uri,CharSequence title) {
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
         notifBuilder.setContentTitle(title);
         notifBuilder.setContentText(text);
@@ -201,7 +201,8 @@ public class Utility {
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify((int) id, notifBuilder.build());
+        manager.cancel(Constants.APP_NOTIFICATION_ID);
+        manager.notify(Constants.APP_NOTIFICATION_ID, notifBuilder.build());
     }
 
     public static Intent getWeatherDetailsIntent(Uri uri) {

@@ -1,23 +1,21 @@
 package com.example.nilarnab.mystats;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.ActivityOptions;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.example.nilarnab.mystats.fragments.WeatherDetailsFragment;
 import com.example.nilarnab.mystats.fragments.WeatherForecastFragment;
 import com.example.nilarnab.mystats.sync.SyncAdapter;
 import com.example.nilarnab.mystats.utility.Utility;
-
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements WeatherForecastFragment.listener {
@@ -32,6 +30,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_container, WeatherForecastFragment.newInstance(), FORECAST_FRAGMENT)
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             mTwoPaneMode = false;
         }
-
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(Constants.APP_NOTIFICATION_ID);
     }
 
     @Override
@@ -86,7 +85,10 @@ public class MainActivity extends AppCompatActivity
                             WeatherDetailsFragment.newInstance(uri.toString()))
                     .commit();
         } else {
-            startActivity(Utility.getWeatherDetailsIntent(uri));
+            ActivityOptionsCompat activityOptionsCompat =
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+
+            ActivityCompat.startActivity(this,Utility.getWeatherDetailsIntent(uri),activityOptionsCompat.toBundle());
         }
     }
 }
