@@ -32,6 +32,7 @@ public class DetailsActivity extends AppCompatActivity {
             switch (action) {
                 case ACTION_WEATHER: {
                     if (intent.getData() != null) {
+                        supportStartPostponedEnterTransition();
                         showFragment(WeatherDetailsFragment.newInstance(intent.getDataString()));
                     }
                 }

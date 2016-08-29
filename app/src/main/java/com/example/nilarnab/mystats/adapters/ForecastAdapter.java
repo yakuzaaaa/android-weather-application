@@ -2,10 +2,10 @@ package com.example.nilarnab.mystats.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,26 +18,29 @@ import com.example.nilarnab.mystats.utility.WeatherUtils;
 /**
  * Created by nilarnab on 6/8/16.
  */
-public class ForecastAdapter extends CursorAdapter {
+public class ForecastAdapter extends GenericRecyclerViewCursorAdapter<ForecastAdapter.WeatherListViewHolder> {
     private static final int VIEW_TODAY = 0;
     private static final int VIEW_FUTURE = 1;
+    public static WeatherListViewHolder.ItemClickListener mListener;
+    private Context mContext;
 
-    public ForecastAdapter(Context context, Cursor cursor) {
-        super(context, cursor, FLAG_REGISTER_CONTENT_OBSERVER);
+    public ForecastAdapter(Context context, Cursor cursor, WeatherListViewHolder.ItemClickListener listener) {
+        super(cursor);
+        mContext = context;
+        mListener = listener;
     }
 
     @Override
-    public int getCount() {
-        if (getCursor() != null) {
-            return getCursor().getCount();
+    public WeatherListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+
+        if(viewType == VIEW_FUTURE) {
+            view = LayoutInflater.from(mContext).inflate(R.layout.list_item_weather, parent,false);
+        } else {
+            view = LayoutInflater.from(mContext).inflate(R.layout.list_item_weather_today, parent,false);
         }
 
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
+        return new WeatherListViewHolder(view);
     }
 
     @Override
@@ -45,22 +48,9 @@ public class ForecastAdapter extends CursorAdapter {
         return position == 0 ? VIEW_TODAY : VIEW_FUTURE;
     }
 
-    @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view;
-        if (getItemViewType(cursor.getPosition()) == VIEW_TODAY) {
-            view = LayoutInflater.from(context).inflate(R.layout.list_item_weather_today, parent, false);
-        } else {
-            view = LayoutInflater.from(context).inflate(R.layout.list_item_weather, parent, false);
-        }
-        ViewHolder holder = new ViewHolder(view);
-        view.setTag(holder);
-
-        return view;
-    }
-
-    private WeatherSingleDay getWeatherItem(Cursor c) {
+    private static WeatherSingleDay getWeatherItem(Cursor c) {
         WeatherSingleDay day = new WeatherSingleDay();
+        day.setDate(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_DATE)));
         day.setDescription(c.getString(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_CONDITION)));
         day.setMax(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MAX_TEMP)));
         day.setMin(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MIN_TEMP)));
@@ -74,40 +64,48 @@ public class ForecastAdapter extends CursorAdapter {
     }
 
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void onBindViewHolder(final WeatherListViewHolder holder, Cursor cursor) {
         if (cursor != null) {
-            ViewHolder holder = (ViewHolder) view.getTag();
-
-            WeatherSingleDay day = getWeatherItem(cursor);
+            final WeatherSingleDay day = getWeatherItem(cursor);
 
             holder.desc.setText(day.getDescription());
             holder.dow.setText(day.getDayOfWeek());
             holder.max.setText(WeatherUtils.formatTemperature(day.getMax()));
             holder.min.setText(WeatherUtils.formatTemperature(day.getMin()));
-
-            //todo remove me coz I dont need if's and buts
-            if (getItemViewType(cursor.getPosition()) == VIEW_TODAY) {
-                holder.iconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(day.getWeatherConditionId()));
-            } else {
-                holder.iconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(day.getWeatherConditionId()));
-            }
-
+            holder.iconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(day.getWeatherConditionId()));
+            holder.parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    holder.bindClickListener(holder.iconView,holder.desc,holder.max,holder.min,day);
+                }
+            });
         }
     }
 
-    public static class ViewHolder {
+    public static class WeatherListViewHolder extends RecyclerView.ViewHolder {
         TextView max;
         TextView min;
         TextView desc;
         TextView dow;
         ImageView iconView;
+        View parent;
 
-        public ViewHolder(View view) {
+        public WeatherListViewHolder(View view) {
+            super(view);
             desc = (TextView) view.findViewById(R.id.list_weather_desc);
             max = (TextView) view.findViewById(R.id.list_weather_max);
             min = (TextView) view.findViewById(R.id.list_weather_min);
             dow = (TextView) view.findViewById(R.id.list_weather_day_of_week);
             iconView = (ImageView) view.findViewById(R.id.list_item_weather_icon);
+            parent = view.findViewById(R.id.list_item_parent);
+        }
+
+        public void bindClickListener(ImageView iconView, TextView desc,TextView max,TextView min, WeatherSingleDay day) {
+            mListener.onItemClicked(iconView,desc,max,min,day,getAdapterPosition());
+        }
+
+        public interface ItemClickListener {
+            void onItemClicked(ImageView icon, TextView desc,TextView max,TextView min, WeatherSingleDay day, int position);
         }
     }
 }

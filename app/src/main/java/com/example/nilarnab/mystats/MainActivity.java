@@ -1,16 +1,19 @@
 package com.example.nilarnab.mystats;
 
-import android.app.ActivityOptions;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.nilarnab.mystats.fragments.WeatherDetailsFragment;
 import com.example.nilarnab.mystats.fragments.WeatherForecastFragment;
@@ -30,7 +33,6 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_activity_container, WeatherForecastFragment.newInstance(), FORECAST_FRAGMENT)
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListItemClicked(Uri uri) {
+    public void onListItemClicked(Uri uri, ImageView icon, TextView desc, int position, View max, View min) {
         if (mTwoPaneMode) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.details_activity_container,
@@ -86,7 +88,12 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         } else {
             ActivityOptionsCompat activityOptionsCompat =
-                    ActivityOptionsCompat.makeSceneTransitionAnimation(this);
+                    ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                            new Pair<View, String>(icon,getString(R.string.detail_icon_transition_name)),
+                            new Pair<View,String>(desc,getString(R.string.detail_desc_transition_name)),
+                            new Pair<View,String>(max,getString(R.string.detail_max_transition_name)),
+                            new Pair<View,String>(min,getString(R.string.detail_min_transition_name))
+                    );
 
             ActivityCompat.startActivity(this,Utility.getWeatherDetailsIntent(uri),activityOptionsCompat.toBundle());
         }

@@ -45,4 +45,9 @@
     <string name="pressure">Pressure</string>
     <string name="wind_speed">Wind Speed</string>
 
+    <string name="detail_icon_transition_name" translatable="false">TN_DetailIcon</string>
+    <string name="detail_max_transition_name" translatable="false">TN_DetailMax</string>
+    <string name="detail_min_transition_name" translatable="false">TN_DetailMin</string>
+    <string name="detail_desc_transition_name" translatable="false">TN_DetailDesc</string>
+
 </resources>

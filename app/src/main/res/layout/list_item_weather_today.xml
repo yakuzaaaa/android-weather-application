@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="200dp"
-              android:background="@color/colorPrimary"
-              android:baselineAligned="false"
-              android:orientation="horizontal">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item_parent"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/colorPrimary"
+    android:baselineAligned="false"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -29,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
+            android:transitionName="@string/detail_max_transition_name"
             android:textColor="@color/white"
             android:textSize="34sp"
             tools:text="21"/>
@@ -37,6 +40,7 @@
             android:id="@+id/list_weather_min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="@string/detail_min_transition_name"
             android:padding="8dp"
             android:textColor="@color/white"
             android:textSize="34sp"
@@ -55,7 +59,7 @@
             android:id="@+id/list_item_weather_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:transitionName="transitionName"
+            android:transitionName="@string/detail_icon_transition_name"
             tools:src="@drawable/art_clear"/>
 
         <TextView
@@ -63,6 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
+            android:transitionName="@string/detail_desc_transition_name"
             android:textColor="@color/white"
             android:textSize="22sp"
             tools:text="clear"/>

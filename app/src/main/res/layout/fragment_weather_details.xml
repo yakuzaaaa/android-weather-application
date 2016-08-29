@@ -37,6 +37,7 @@
             android:layout_width="0dp"
             android:adjustViewBounds="true"
             app:layout_columnWeight="1"
+            android:transitionName="@string/detail_icon_transition_name"
             app:layout_gravity="fill_horizontal"
             tools:src="@drawable/art_clouds"/>
 
@@ -47,6 +48,7 @@
             android:gravity="center_horizontal"
             android:textColor="@color/black"
             android:textSize="72sp"
+            android:transitionName="@string/detail_max_transition_name"
             app:layout_columnWeight="1"
             app:layout_gravity="fill_horizontal"
             tools:text="19"/>
@@ -55,6 +57,7 @@
             android:id="@+id/tv_weather_desc"
             android:layout_width="0dp"
             android:fontFamily="sans-serif"
+            android:transitionName="@string/detail_desc_transition_name"
             android:gravity="center_horizontal"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/black"
@@ -67,6 +70,7 @@
             android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
             android:fontFamily="sans-serif-light"
             android:gravity="center_horizontal"
+            android:transitionName="@string/detail_min_transition_name"
             android:textColor="@color/black"
             android:textSize="36sp"
             app:layout_columnWeight="1"

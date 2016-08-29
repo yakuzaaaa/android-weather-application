@@ -9,17 +9,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.adapters.ForecastAdapter;
 import com.example.nilarnab.mystats.database.WeatherContract;
+import com.example.nilarnab.mystats.models.WeatherSingleDay;
 import com.example.nilarnab.mystats.utility.Utility;
 
 import butterknife.BindView;
@@ -43,7 +46,7 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
             WeatherContract.LocationTable.COLUMN_COORD_LAT,
             WeatherContract.LocationTable.COLUMN_COORD_LNG
     };
-    @BindView(R.id.weather_list) ListView mListView;
+    @BindView(R.id.weather_list) RecyclerView mRecyclerView;
 
     private ForecastAdapter mWeatherAdapter;
     private listener mListener;
@@ -76,21 +79,19 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
         View rootView = inflater.inflate(R.layout.fragment_weather_list_forecast, container, false);
         ButterKnife.bind(this, rootView);
 
-        mWeatherAdapter = new ForecastAdapter(getActivity(), null);
-        mListView.setAdapter(mWeatherAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
-                mLastSelectedPosition = position;
-                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-                if (cursor != null) {
-                    String locationSetting = Utility.getPreferredLocation();
-                    mListener.onListItemClicked(WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(
-                            locationSetting, cursor.getLong(COL_WEATHER_DATE)));
-                }
-            }
-        });
+        mWeatherAdapter = new ForecastAdapter(getActivity(),
+                null,
+                new ForecastAdapter.WeatherListViewHolder.ItemClickListener() {
+                    @Override
+                    public void onItemClicked(ImageView icon, TextView desc,TextView max,TextView min, WeatherSingleDay day, int position) {
+                        mLastSelectedPosition = position;
+                        String locationSetting = Utility.getPreferredLocation();
+                        mListener.onListItemClicked(WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(
+                                locationSetting, day.getDate()),icon,desc,position, max, min);
+                    }
+                });
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(mWeatherAdapter);
 
         return rootView;
     }
@@ -100,7 +101,7 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
             mLastSelectedPosition = savedInstanceState.getInt(STATE_KEY_LAST_POSITION);
-            mListView.smoothScrollToPosition(mLastSelectedPosition);
+            mRecyclerView.smoothScrollToPosition(mLastSelectedPosition);
         }
     }
 
@@ -144,6 +145,6 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
     }
 
     public interface listener {
-        void onListItemClicked(Uri uri);
+        void onListItemClicked(Uri uri, ImageView view, TextView desc, int transitionName, View max, View min);
     }
 }

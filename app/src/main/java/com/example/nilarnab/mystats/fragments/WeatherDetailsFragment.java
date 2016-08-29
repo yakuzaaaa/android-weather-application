@@ -90,7 +90,6 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_weather_details, container, false);
         ButterKnife.bind(this, root);
-
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,5 +186,7 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
         mWindSpeed.setText(WeatherUtils.getFormattedWind(mSingleDayObject.getWindSpeed(), mSingleDayObject.getDegree()));
         mWeatherCondition.setText(mSingleDayObject.getDescription());
         mIconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(mSingleDayObject.getWeatherConditionId()));
+
+        getActivity().supportStartPostponedEnterTransition();
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:id="@+id/list_item_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -19,7 +20,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:transitionName="transitionName"
+            android:transitionName="@string/detail_icon_transition_name"
             app:srcCompat="@drawable/ic_sunny_48dp"
             tools:src="@drawable/ic_sunny_48dp"/>
     </FrameLayout>
@@ -42,6 +43,7 @@
             android:id="@+id/list_weather_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="@string/detail_desc_transition_name"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceSmall"
             android:textSize="14sp"
@@ -58,6 +60,7 @@
         <TextView
             android:id="@+id/list_weather_max"
             android:layout_width="wrap_content"
+            android:transitionName="@string/detail_max_transition_name"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceListItem"
@@ -67,6 +70,7 @@
             android:id="@+id/list_weather_min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="@string/detail_min_transition_name"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceListItemSmall"
             tools:text="18"/>
