@@ -35,16 +35,16 @@
         <ImageView
             android:id="@+id/weather_icon_view"
             android:layout_width="0dp"
+            android:layout_height="150dp"
             android:adjustViewBounds="true"
-            app:layout_columnWeight="1"
             android:transitionName="@string/detail_icon_transition_name"
+            app:layout_columnWeight="1"
             app:layout_gravity="fill_horizontal"
             tools:src="@drawable/art_clouds"/>
 
         <TextView
             android:id="@+id/tv_max_temp"
             android:layout_width="0dp"
-            android:fontFamily="sans-serif-light"
             android:gravity="center_horizontal"
             android:textColor="@color/black"
             android:textSize="72sp"
@@ -57,10 +57,11 @@
             android:id="@+id/tv_weather_desc"
             android:layout_width="0dp"
             android:fontFamily="sans-serif"
-            android:transitionName="@string/detail_desc_transition_name"
             android:gravity="center_horizontal"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/black"
+            android:textColor="@color/material_grey_500"
+            android:textSize="15sp"
+            android:transitionName="@string/detail_desc_transition_name"
             app:layout_columnWeight="1"
             tools:text="Rainy"/>
 
@@ -68,11 +69,10 @@
             android:id="@+id/tv_min_temp"
             android:layout_width="0dp"
             android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
-            android:fontFamily="sans-serif-light"
             android:gravity="center_horizontal"
-            android:transitionName="@string/detail_min_transition_name"
-            android:textColor="@color/black"
+            android:textColor="@color/material_grey_500"
             android:textSize="36sp"
+            android:transitionName="@string/detail_min_transition_name"
             app:layout_columnWeight="1"
             tools:text="10"/>
 
@@ -160,17 +160,4 @@
             app:layout_rowWeight="1"/>
 
     </android.support.v7.widget.GridLayout>
-
-    <!-- gone for now -->
-    <!-- gone for now -->
-    <!-- gone for now -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_share_weather_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:visibility="gone"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_share_white_24dp"/>
-
 </LinearLayout>

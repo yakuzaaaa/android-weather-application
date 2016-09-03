@@ -1,77 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v7.widget.GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_item_parent"
     android:layout_width="match_parent"
     android:layout_height="200dp"
-    android:background="@color/colorPrimary"
+    android:background="@color/material_white_1000"
     android:baselineAligned="false"
-    android:orientation="horizontal">
+    android:elevation="4dp"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp"
+    app:columnCount="2">
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+    <TextView
+        android:id="@+id/list_weather_day_of_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:textAllCaps="true"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_columnSpan="2"
+        app:layout_gravity="fill_horizontal"
+        tools:text="TODAY, JUNE 24"/>
 
-        <TextView
-            android:id="@+id/list_weather_day_of_week"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="18dp"
-            android:textAllCaps="true"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            tools:text="TODAY, JUNE 24"/>
-
-        <TextView
-            android:id="@+id/list_weather_max"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:transitionName="@string/detail_max_transition_name"
-            android:textColor="@color/white"
-            android:textSize="34sp"
-            tools:text="21"/>
-
-        <TextView
-            android:id="@+id/list_weather_min"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:transitionName="@string/detail_min_transition_name"
-            android:padding="8dp"
-            android:textColor="@color/white"
-            android:textSize="34sp"
-            tools:text="8"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+    <TextView
+        android:id="@+id/list_weather_max"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:textColor="@color/black"
+        android:textSize="72sp"
+        android:transitionName="@string/detail_max_transition_name"
+        app:layout_column="0"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        tools:text="21"/>
 
-        <ImageView
-            android:id="@+id/list_item_weather_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:transitionName="@string/detail_icon_transition_name"
-            tools:src="@drawable/art_clear"/>
+    <ImageView
+        android:id="@+id/list_item_weather_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:transitionName="@string/detail_icon_transition_name"
+        app:layout_column="1"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill"
+        tools:src="@drawable/art_clear"/>
 
-        <TextView
-            android:id="@+id/list_weather_desc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:transitionName="@string/detail_desc_transition_name"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            tools:text="clear"/>
-    </LinearLayout>
+    <TextView
+        android:id="@+id/list_weather_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/material_grey_500"
+        android:textSize="36sp"
+        android:transitionName="@string/detail_min_transition_name"
+        app:layout_column="0"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        tools:text="8"/>
 
+    <TextView
+        android:id="@+id/list_weather_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/material_grey_500"
+        android:textSize="15sp"
+        android:transitionName="@string/detail_desc_transition_name"
+        app:layout_column="1"
+        app:layout_columnSpan="1"
+        app:layout_columnWeight="1"
+        app:layout_gravity="fill_horizontal"
+        tools:text="clear"/>
 
-</LinearLayout>
+</android.support.v7.widget.GridLayout>

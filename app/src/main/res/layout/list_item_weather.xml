@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:id="@+id/list_item_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="5dp"
@@ -43,10 +43,11 @@
             android:id="@+id/list_weather_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:transitionName="@string/detail_desc_transition_name"
+            android:gravity="center_horizontal"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceSmall"
             android:textSize="14sp"
+            android:transitionName="@string/detail_desc_transition_name"
             tools:text="Pretty cool weather"/>
 
     </LinearLayout>
@@ -60,19 +61,19 @@
         <TextView
             android:id="@+id/list_weather_max"
             android:layout_width="wrap_content"
-            android:transitionName="@string/detail_max_transition_name"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceListItem"
+            android:transitionName="@string/detail_max_transition_name"
             tools:text="17"/>
 
         <TextView
             android:id="@+id/list_weather_min"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:transitionName="@string/detail_min_transition_name"
             android:padding="8dp"
             android:textAppearance="?android:textAppearanceListItemSmall"
+            android:transitionName="@string/detail_min_transition_name"
             tools:text="18"/>
     </LinearLayout>
 </LinearLayout>

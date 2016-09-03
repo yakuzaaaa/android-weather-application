@@ -50,4 +50,10 @@
     <string name="detail_min_transition_name" translatable="false">TN_DetailMin</string>
     <string name="detail_desc_transition_name" translatable="false">TN_DetailDesc</string>
 
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="setting_gears">SETTING\nGEARS</string>
+    <string name="pref_user_longitude">pref_user_lng</string>
+    <string name="pref_user_latitude">pref_user_lat</string>
+    <string name="pref_user_city">pref_user_city</string>
+
 </resources>
