@@ -5,9 +5,11 @@ import android.util.Log;
 
 import com.example.nilarnab.mystats.App;
 import com.example.nilarnab.mystats.Constants;
+import com.example.nilarnab.mystats.events.DataUpdatedEvent;
 import com.example.nilarnab.mystats.utility.Utility;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -36,7 +38,7 @@ public class DataFetchUtil {
 
     public static void fetchDataNow() {
         String units = Utility.getPreferredUnit();
-        String location = Utility.getPreferredLocation();
+        String location = Utility.getUserLocation();
 
         String resultJSON = "";
 
@@ -104,6 +106,8 @@ public class DataFetchUtil {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        EventBus.getDefault().post(new DataUpdatedEvent());
     }
 
 }

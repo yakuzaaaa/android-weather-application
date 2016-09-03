@@ -132,14 +132,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         getSyncAccount();
     }
 
-    @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
-        doPerformDataSync(getContext());
-    }
-
     public static void doPerformDataSync(Context context) {
         DataFetchUtil.fetchDataNow();
-        String locationSetting = Utility.getPreferredLocation();
+        String locationSetting = Utility.getUserLocation();
 
         Calendar tempUtilCalendar = new GregorianCalendar();
         tempUtilCalendar.add(Calendar.DAY_OF_MONTH,1);
@@ -175,5 +170,10 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                 WeatherContract.WeatherTable.COLUMN_DATE + " < ?",
                 new String[]{String.valueOf(tempUtilCalendar.getTimeInMillis() - twoDays)}
         );
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+        doPerformDataSync(getContext());
     }
 }

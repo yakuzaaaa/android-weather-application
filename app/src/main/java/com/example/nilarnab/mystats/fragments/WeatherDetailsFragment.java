@@ -1,11 +1,9 @@
 package com.example.nilarnab.mystats.fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.database.WeatherContract;
 import com.example.nilarnab.mystats.models.WeatherSingleDay;
-import com.example.nilarnab.mystats.utility.Utility;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
 import butterknife.BindView;
@@ -65,7 +62,7 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     @BindView(R.id.tv_min_temp) TextView mMinTemp;
     @BindView(R.id.weather_icon_view) ImageView mIconView;
     @BindView(R.id.tv_weather_desc) TextView mWeatherCondition;
-    @BindView(R.id.fab_share_weather_details) FloatingActionButton mShareButton;
+
     private Uri mDataUri;
     private WeatherSingleDay mSingleDayObject;
 
@@ -90,15 +87,6 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_weather_details, container, false);
         ButterKnife.bind(this, root);
-        mShareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSingleDayObject != null) {
-                    startActivity(Intent.createChooser(Utility.buildShareIntent(mSingleDayObject.getDescription()), "Share"));
-                }
-            }
-        });
-
         setHasOptionsMenu(true);
 
         return root;

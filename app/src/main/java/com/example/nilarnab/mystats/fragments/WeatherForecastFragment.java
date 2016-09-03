@@ -1,6 +1,7 @@
 package com.example.nilarnab.mystats.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,8 +24,16 @@ import android.widget.TextView;
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.adapters.ForecastAdapter;
 import com.example.nilarnab.mystats.database.WeatherContract;
+import com.example.nilarnab.mystats.events.DataUpdatedEvent;
+import com.example.nilarnab.mystats.events.LocationFetchedEvent;
 import com.example.nilarnab.mystats.models.WeatherSingleDay;
+import com.example.nilarnab.mystats.services.DataFetchUtil;
+import com.example.nilarnab.mystats.services.LocationListenerService;
 import com.example.nilarnab.mystats.utility.Utility;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +57,8 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
             WeatherContract.LocationTable.COLUMN_COORD_LNG
     };
     @BindView(R.id.weather_list) RecyclerView mRecyclerView;
+    @BindView(R.id.empty_view) View mEmptyView;
+    @BindView(R.id.weather_refresh) SwipeRefreshLayout mSwipeRefreshWeather;
 
     private ForecastAdapter mWeatherAdapter;
     private listener mListener;
@@ -83,15 +95,25 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
                 null,
                 new ForecastAdapter.WeatherListViewHolder.ItemClickListener() {
                     @Override
-                    public void onItemClicked(ImageView icon, TextView desc,TextView max,TextView min, WeatherSingleDay day, int position) {
+                    public void onItemClicked(ImageView icon, TextView desc, TextView max, TextView min, WeatherSingleDay day, int position) {
                         mLastSelectedPosition = position;
-                        String locationSetting = Utility.getPreferredLocation();
+                        String locationSetting = Utility.getUserLocation();
                         mListener.onListItemClicked(WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(
-                                locationSetting, day.getDate()),icon,desc,position, max, min);
+                                locationSetting, day.getDate()), icon, desc, position, max, min);
                     }
                 });
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setAdapter(mWeatherAdapter);
+
+        mSwipeRefreshWeather.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //todo: move the whole location fetch and data fetch thing in a
+                //todo: single work flow and make them timely
+                Intent intent = new Intent(getActivity(), LocationListenerService.class);
+                getActivity().startService(intent);
+            }
+        });
 
         return rootView;
     }
@@ -124,9 +146,49 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void dataUpdatedEvent(DataUpdatedEvent event) {
+        hideSwipeRefresh();
+    }
+
+    private void hideSwipeRefresh() {
+        if(mSwipeRefreshWeather.isRefreshing()) {
+            //GOOGLE CERTIFIED HACK TO ACTUALLY HIDE THE REFRESH LAYOUT
+            mSwipeRefreshWeather.post(new Runnable() {
+                @Override
+                public void run() {
+                    mSwipeRefreshWeather.setRefreshing(false);
+                }
+            });
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND, sticky = true)
+    public void locationFetchedEvent(LocationFetchedEvent event) {
+        if (event.isChangedLocation()) {
+            DataFetchUtil.fetchDataNow();
+        } else {
+            hideSwipeRefresh();
+        }
+
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
-                WeatherContract.WeatherTable.buildWeatherWithLocationUri(Utility.getPreferredLocation()),
+                WeatherContract.WeatherTable.buildWeatherWithLocationUri(Utility.getUserLocation()),
                 FORECAST_COLUMNS,
                 null,
                 null,
@@ -136,7 +198,12 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mWeatherAdapter.swapCursor(data);
+        if (data != null && data.getCount() > 0) {
+            mWeatherAdapter.swapCursor(data);
+            mEmptyView.setVisibility(View.GONE);
+        } else {
+            mEmptyView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

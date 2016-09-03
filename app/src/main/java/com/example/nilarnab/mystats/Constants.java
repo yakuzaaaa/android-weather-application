@@ -8,4 +8,11 @@ public class Constants {
     public static final int DAYS_COUNT = 14;
     public static final int WEATHER_NOTIF_REQUEST_CODE = 1009;
     public static final int APP_NOTIFICATION_ID = 9999;
+
+
+    public static final float DEFAULT_LAT = 0;
+    public static final float DEFAULT_LNG = 31;
+
+    public static final int LOCATION_PERMIT = 1007;
+    public static final long SPALSH_TIME_LIMIT_MILLIS = 6000;
 }
