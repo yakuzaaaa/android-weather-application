@@ -20,7 +20,6 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         View rootView = inflater.inflate(R.layout.fragment_settings, container, false);
 
         addPreferencesFromResource(R.xml.pref_general);
-        bindPreferencWithListener(findPreference(getResources().getString(R.string.pref_pin_code)));
         bindPreferencWithListener(findPreference(getResources().getString(R.string.pref_unit_key)));
 
         return rootView;

@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
+import com.example.nilarnab.mystats.utility.Utility;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -40,7 +41,11 @@ public class LocationListenerService extends Service implements
         super.onCreate();
         if (mGoogleClient == null) {
             mGoogleClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
                     .build();
+            mGoogleClient.connect();
         }
     }
 
@@ -53,10 +58,6 @@ public class LocationListenerService extends Service implements
     }
 
     private void startLocationUpdates() {
-        if (mLocationRequest == null) {
-            createLocationRequest();
-        }
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -66,10 +67,38 @@ public class LocationListenerService extends Service implements
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             return;
-        } else {
+        }
+
+        if (LocationServices.FusedLocationApi.getLocationAvailability(mGoogleClient).isLocationAvailable()) {
+            if (mLocationRequest == null) {
+                createLocationRequest();
+            }
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleClient, mLocationRequest, this);
+        } else {
+            saveLastLocation();
         }
     }
+
+    private void saveLastLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleClient);
+        handleLocationUpdate(lastLocation);
+    }
+
+    private void handleLocationUpdate(Location location) {
+        Utility.storeUserLocation(location);
+        stopSelf();
+    }
+
 
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
@@ -79,7 +108,7 @@ public class LocationListenerService extends Service implements
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        startLocationUpdates();
     }
 
     @Override
@@ -94,6 +123,14 @@ public class LocationListenerService extends Service implements
 
     @Override
     public void onLocationChanged(Location location) {
+        handleLocationUpdate(location);
         Toast.makeText(this, String.format("lat %f, lng %f", location.getLatitude(), location.getLongitude()), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mGoogleClient.disconnect();
+        mGoogleClient = null;
     }
 }

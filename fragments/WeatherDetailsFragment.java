@@ -1,11 +1,9 @@
 package com.example.nilarnab.mystats.fragments;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -20,7 +18,6 @@ import android.widget.TextView;
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.database.WeatherContract;
 import com.example.nilarnab.mystats.models.WeatherSingleDay;
-import com.example.nilarnab.mystats.utility.Utility;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
 import butterknife.BindView;
@@ -57,15 +54,15 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     private static final int COL_DEGREE = 9;
     private static final String STATE_URI = "state_uri";
     private static final String KEY_WEATHER_DETAILS_URI = "single_day_uri";
-    @BindView(R.id.humidity_tv) TextView mHumidity;
-    @BindView(R.id.wind_tv) TextView mWindSpeed;
-    @BindView(R.id.pressure_tv) TextView mPressure;
-    @BindView(R.id.date_tv) TextView mDateText;
-    @BindView(R.id.max_temp_tv) TextView mMaxTemp;
-    @BindView(R.id.min_temp_tv) TextView mMinTemp;
+    @BindView(R.id.tv_humidity) TextView mHumidity;
+    @BindView(R.id.tv_wind) TextView mWindSpeed;
+    @BindView(R.id.tv_pressure) TextView mPressure;
+    @BindView(R.id.tv_date) TextView mDateText;
+    @BindView(R.id.tv_max_temp) TextView mMaxTemp;
+    @BindView(R.id.tv_min_temp) TextView mMinTemp;
     @BindView(R.id.weather_icon_view) ImageView mIconView;
-    @BindView(R.id.weather_desc_tv) TextView mWeatherCondition;
-    @BindView(R.id.fab_share_weather_details) FloatingActionButton mShareButton;
+    @BindView(R.id.tv_weather_desc) TextView mWeatherCondition;
+
     private Uri mDataUri;
     private WeatherSingleDay mSingleDayObject;
 
@@ -90,16 +87,6 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_weather_details, container, false);
         ButterKnife.bind(this, root);
-
-        mShareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mSingleDayObject != null) {
-                    startActivity(Intent.createChooser(Utility.buildShareIntent(mSingleDayObject.getDescription()), "Share"));
-                }
-            }
-        });
-
         setHasOptionsMenu(true);
 
         return root;
@@ -187,5 +174,7 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
         mWindSpeed.setText(WeatherUtils.getFormattedWind(mSingleDayObject.getWindSpeed(), mSingleDayObject.getDegree()));
         mWeatherCondition.setText(mSingleDayObject.getDescription());
         mIconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(mSingleDayObject.getWeatherConditionId()));
+
+        getActivity().supportStartPostponedEnterTransition();
     }
 }

@@ -9,7 +9,11 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -22,6 +26,12 @@ import com.example.nilarnab.mystats.Constants;
 import com.example.nilarnab.mystats.DetailsActivity;
 import com.example.nilarnab.mystats.MainActivity;
 import com.example.nilarnab.mystats.R;
+import com.example.nilarnab.mystats.events.LocationFetchedEvent;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by nilarnab on 6/8/16.
@@ -52,6 +62,14 @@ public class Utility {
 
     public static void storeFloatPreference(String key, float val) {
         preferences.edit().putFloat(key, val).apply();
+    }
+
+    public static void storeFloatPreference(int keyRes, float val) {
+        storeFloatPreference(context.getString(keyRes), val);
+    }
+
+    public static float getFloatPreference(int keyRes, float val) {
+        return getFloatPreference(context.getString(keyRes), val);
     }
 
     /**
@@ -173,25 +191,25 @@ public class Utility {
         context.startActivity(intent);
     }
 
-    public static String getPreferredLocation() {
-        return getStringPreference(R.string.pref_pin_code, "712235");
+    public static String getUserLocation() {
+        return getStringPreference(R.string.pref_pin_code, null);
     }
 
     public static String getPreferredUnit() {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
     }
 
-    public static void showWeatherNotification(CharSequence text, Bitmap largeIcon, Uri uri, long id, CharSequence title) {
+    public static void showWeatherNotification(CharSequence text, Bitmap largeIcon, Uri uri, CharSequence title) {
         NotificationCompat.Builder notifBuilder = new NotificationCompat.Builder(context);
         notifBuilder.setContentTitle(title);
         notifBuilder.setContentText(text);
         notifBuilder.setSmallIcon(R.drawable.ic_stat_name);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notifBuilder.setLargeIcon(largeIcon);
         }
 
-        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE,getWeatherDetailsIntent(uri),
+        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE, getWeatherDetailsIntent(uri),
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -201,7 +219,8 @@ public class Utility {
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify((int) id, notifBuilder.build());
+        manager.cancel(Constants.APP_NOTIFICATION_ID);
+        manager.notify(Constants.APP_NOTIFICATION_ID, notifBuilder.build());
     }
 
     public static Intent getWeatherDetailsIntent(Uri uri) {
@@ -210,5 +229,52 @@ public class Utility {
         intent.setAction(DetailsActivity.ACTION_WEATHER);
 
         return intent;
+    }
+
+    public static void storeUserLocation(Location location) {
+        float lat = (float) location.getLatitude();
+        float lng = (float) location.getLongitude();
+
+        storeUserLatitude(lat);
+        storeUserLongitude(lng);
+        storeUserCity();
+    }
+
+    private static void storeUserCity() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                boolean hasChanged = false;
+                Geocoder geocoder = new Geocoder(context);
+                float lat = getFloatPreference(R.string.pref_user_latitude, Constants.DEFAULT_LAT);
+                float lng = getFloatPreference(R.string.pref_user_longitude, Constants.DEFAULT_LNG);
+
+                try {
+                    List<Address> addresses = geocoder.getFromLocation(lat, lng, 1);
+                    if(addresses.size() > 0) {
+                        String pin = addresses.get(0).getPostalCode();
+                        if(pin != null) {
+                            if(!pin.equals(getUserLocation())) {
+                                storeStringPreference(context.getString(R.string.pref_pin_code), pin);
+                                hasChanged = true;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    hasChanged = false;
+                }
+                EventBus.getDefault().postSticky(new LocationFetchedEvent(hasChanged));
+                return null;
+            }
+        }.execute();
+    }
+
+    private static void storeUserLongitude(float lng) {
+        storeFloatPreference(R.string.pref_user_longitude, lng);
+    }
+
+    private static void storeUserLatitude(float lat) {
+        storeFloatPreference(R.string.pref_user_latitude, lat);
     }
 }

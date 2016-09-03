@@ -74,7 +74,7 @@ public class WeatherUtils {
         double lat = coord.getDouble("lat");
         double lng = coord.getDouble("lon");
 
-        String locationPin = Utility.getPreferredLocation();
+        String locationPin = Utility.getUserLocation();
 
         long locationId = addLocation(locationPin, cityName, lat, lng);
 
