@@ -12,8 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.example.nilarnab.mystats.events.DataUpdatedEvent;
 import com.example.nilarnab.mystats.events.LocationFetchedEvent;
-import com.example.nilarnab.mystats.services.DataFetchUtil;
 import com.example.nilarnab.mystats.services.LocationListenerService;
+import com.example.nilarnab.mystats.sync.SyncAdapter;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -37,25 +37,26 @@ public class SplashActivity extends AppCompatActivity {
             if (mHandler != null) {
                 mHandler.removeCallbacksAndMessages(this);
             }
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                startService(new Intent(this, LocationListenerService.class));
-            } else {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMIT);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    startService(new Intent(this, LocationListenerService.class));
+                } else {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Constants.LOCATION_PERMIT);
+                }
             }
-        }
-        startService(new Intent(this, LocationListenerService.class));
+            startService(new Intent(this, LocationListenerService.class));
 
-        //todo:start a time limit handler here
-        mHandler = new Handler(Looper.getMainLooper());
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mTimerExpired = true;
-                switchActivity();
-            }
-        }, Constants.SPALSH_TIME_LIMIT_MILLIS);
+            //todo:start a time limit handler here
+            mHandler = new Handler(Looper.getMainLooper());
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTimerExpired = true;
+                    switchActivity();
+                }
+            }, Constants.SPALSH_TIME_LIMIT_MILLIS);
+        }
     }
 
     @Override
@@ -84,7 +85,7 @@ public class SplashActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.BACKGROUND, sticky = true)
     public void locationFetchedEvent(LocationFetchedEvent event) {
         if (event.isChangedLocation()) {
-            DataFetchUtil.fetchDataNow();
+            SyncAdapter.initWeatherSync();
         } else {
             switchActivity();
         }

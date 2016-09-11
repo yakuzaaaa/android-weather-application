@@ -16,9 +16,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.text.Html;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.nilarnab.mystats.App;
@@ -27,6 +27,7 @@ import com.example.nilarnab.mystats.DetailsActivity;
 import com.example.nilarnab.mystats.MainActivity;
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.events.LocationFetchedEvent;
+import com.example.nilarnab.mystats.services.LocationListenerService;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -209,13 +210,21 @@ public class Utility {
             notifBuilder.setLargeIcon(largeIcon);
         }
 
-        PendingIntent resultIntent = PendingIntent.getActivity(context, Constants.WEATHER_NOTIF_REQUEST_CODE, getWeatherDetailsIntent(uri),
-                PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent mainActivity = new Intent(context,MainActivity.class);
+        mainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
+        Intent detailsActivity = Utility.getWeatherDetailsIntent(uri);
 
-        notifBuilder.setContentIntent(resultIntent);
+        PendingIntent notifPendingIntent = PendingIntent.getActivities(
+                context,
+                Constants.WEATHER_NOTIF_REQUEST_CODE,
+                new Intent[]{mainActivity,detailsActivity},
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        notifBuilder.setContentIntent(
+               notifPendingIntent
+        );
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -232,15 +241,21 @@ public class Utility {
     }
 
     public static void storeUserLocation(Location location) {
-        float lat = (float) location.getLatitude();
-        float lng = (float) location.getLongitude();
+        if(location != null) {
+            float lat = (float) location.getLatitude();
+            float lng = (float) location.getLongitude();
 
-        storeUserLatitude(lat);
-        storeUserLongitude(lng);
-        storeUserCity();
+            storeUserLatitude(lat);
+            storeUserLongitude(lng);
+            storeUserPin();
+        }
     }
 
-    private static void storeUserCity() {
+    public static void stopLocationTracking() {
+        context.stopService(new Intent(context, LocationListenerService.class));
+    }
+
+    private static void storeUserPin() {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -255,6 +270,7 @@ public class Utility {
                         String pin = addresses.get(0).getPostalCode();
                         if(pin != null) {
                             if(!pin.equals(getUserLocation())) {
+                                Log.d(App.TAG,pin);
                                 storeStringPreference(context.getString(R.string.pref_pin_code), pin);
                                 hasChanged = true;
                             }

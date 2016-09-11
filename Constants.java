@@ -15,4 +15,5 @@ public class Constants {
 
     public static final int LOCATION_PERMIT = 1007;
     public static final long SPALSH_TIME_LIMIT_MILLIS = 6000;
+    public static final int WIDGET_REQUEST_CODE = 1006;
 }

@@ -1,5 +1,6 @@
 package com.example.nilarnab.mystats;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -22,6 +24,7 @@ public class DetailsActivity extends AppCompatActivity {
         if (getIntent().getAction() != null) {
             checkAction(getIntent());
         }
+        ((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(Constants.APP_NOTIFICATION_ID);
     }
 
     private void checkAction(Intent intent) {
@@ -30,6 +33,7 @@ public class DetailsActivity extends AppCompatActivity {
             switch (action) {
                 case ACTION_WEATHER: {
                     if (intent.getData() != null) {
+                        supportStartPostponedEnterTransition();
                         showFragment(WeatherDetailsFragment.newInstance(intent.getDataString()));
                     }
                 }

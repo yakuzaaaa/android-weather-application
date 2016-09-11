@@ -6,6 +6,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.content.res.Resources;
@@ -31,16 +32,15 @@ import java.util.GregorianCalendar;
  * Created by nilarnab on 27/8/16 and it is made of each and everyone of you people to see, judge and advice :-).
  */
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
-    private static final long SYNC_INTERVAL_SECONDS = 5 * 3600 ;// * 3600 * 3;
-    private static final long FLEX_INTERVAL_SECONDS = 3 * 3600;//* 3600 * 2;
-
+    public static final String ACTION_WEATHER_SYNCED = "com.example.stats.yakuza.ACTION_WEATHER_SYNCED";
+    private static final long SYNC_INTERVAL_SECONDS = 3 * 3600 ;
+    private static final long FLEX_INTERVAL_SECONDS = 3600;
     private static final String[] FORECAST_COLUMNS = {
             WeatherContract.WeatherTable.TABLE_NAME + "." + WeatherContract.WeatherTable._ID,
             WeatherContract.WeatherTable.COLUMN_CONDITION,
             WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID,
             WeatherContract.WeatherTable.COLUMN_DATE,
     };
-//    private static final String SELECTION = WeatherContract.WeatherTable.
 
     // these indices must match the projection
     private static final int INDEX_ID = 0;
@@ -154,7 +154,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             Utility.showWeatherNotification(
                     desc,
                     largeIcon,
-                    WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(locationSetting,cursor.getInt(INDEX_DATE)),
+                    WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(locationSetting,cursor.getLong(INDEX_DATE)),
                     title);
             cursor.close();
         }
@@ -175,5 +175,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         doPerformDataSync(getContext());
+
+        //sending broadcast to any receivers out there, read app widget's receiver to update their data
+        getContext().sendBroadcast(new Intent(ACTION_WEATHER_SYNCED));
     }
 }

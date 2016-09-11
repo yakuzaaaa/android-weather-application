@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nilarnab.mystats.R;
-import com.example.nilarnab.mystats.models.WeatherSingleDay;
+import com.example.nilarnab.mystats.models.Weather;
 
 
 public class WeatherForecastAdapter extends GenericRecyclerViewCursorAdapter<WeatherForecastAdapter.ViewHolder> {
@@ -59,7 +59,7 @@ public class WeatherForecastAdapter extends GenericRecyclerViewCursorAdapter<Wea
 //            mPhoto = (ImageView) view.findViewById(R.id.contact_list_image);
         }
 
-        public void bindListener(final WeatherSingleDay member) {
+        public void bindListener(final Weather member) {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

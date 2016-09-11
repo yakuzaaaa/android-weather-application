@@ -3,16 +3,16 @@ package com.example.nilarnab.mystats.models;
 /**
  * Created by nilarnab on 6/8/16.
  */
-public class WeatherSingleDay {
+public class Weather {
     private String description;
     private String dayOfWeek;
     private long date;
-    private Double max;
-    private Double min;
-    private Double humidity;
-    private Double windSpeed;
-    private Double pressure;
-    private Double degree;
+    private double max;
+    private double min;
+    private double humidity;
+    private double windSpeed;
+    private double pressure;
+    private double degree;
     private long weatherConditionId;
 
     public Double getDegree() {
