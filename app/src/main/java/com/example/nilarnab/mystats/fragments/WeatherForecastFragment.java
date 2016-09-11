@@ -1,7 +1,6 @@
 package com.example.nilarnab.mystats.fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,9 +25,9 @@ import com.example.nilarnab.mystats.adapters.ForecastAdapter;
 import com.example.nilarnab.mystats.database.WeatherContract;
 import com.example.nilarnab.mystats.events.DataUpdatedEvent;
 import com.example.nilarnab.mystats.events.LocationFetchedEvent;
-import com.example.nilarnab.mystats.models.WeatherSingleDay;
+import com.example.nilarnab.mystats.models.Weather;
 import com.example.nilarnab.mystats.services.DataFetchUtil;
-import com.example.nilarnab.mystats.services.LocationListenerService;
+import com.example.nilarnab.mystats.sync.SyncAdapter;
 import com.example.nilarnab.mystats.utility.Utility;
 
 import org.greenrobot.eventbus.EventBus;
@@ -95,7 +94,7 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
                 null,
                 new ForecastAdapter.WeatherListViewHolder.ItemClickListener() {
                     @Override
-                    public void onItemClicked(ImageView icon, TextView desc, TextView max, TextView min, WeatherSingleDay day, int position) {
+                    public void onItemClicked(ImageView icon, TextView desc, TextView max, TextView min, Weather day, int position) {
                         mLastSelectedPosition = position;
                         String locationSetting = Utility.getUserLocation();
                         mListener.onListItemClicked(WeatherContract.WeatherTable.buildWeatherWithLocationAndStartDateUri(
@@ -110,8 +109,7 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
             public void onRefresh() {
                 //todo: move the whole location fetch and data fetch thing in a
                 //todo: single work flow and make them timely
-                Intent intent = new Intent(getActivity(), LocationListenerService.class);
-                getActivity().startService(intent);
+                SyncAdapter.initWeatherSync();
             }
         });
 

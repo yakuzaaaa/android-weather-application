@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.database.WeatherContract;
-import com.example.nilarnab.mystats.models.WeatherSingleDay;
+import com.example.nilarnab.mystats.models.Weather;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
 import butterknife.BindView;
@@ -54,6 +54,7 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     private static final int COL_DEGREE = 9;
     private static final String STATE_URI = "state_uri";
     private static final String KEY_WEATHER_DETAILS_URI = "single_day_uri";
+
     @BindView(R.id.tv_humidity) TextView mHumidity;
     @BindView(R.id.tv_wind) TextView mWindSpeed;
     @BindView(R.id.tv_pressure) TextView mPressure;
@@ -64,7 +65,7 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     @BindView(R.id.tv_weather_desc) TextView mWeatherCondition;
 
     private Uri mDataUri;
-    private WeatherSingleDay mSingleDayObject;
+    private Weather mWeather;
 
     public static WeatherDetailsFragment newInstance(@Nullable String dataUri) {
         Bundle args = new Bundle();
@@ -127,18 +128,18 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data != null && data.moveToFirst()) {
-            mSingleDayObject = new WeatherSingleDay();
+            mWeather = new Weather();
 
-            mSingleDayObject.setDescription(data.getString(COL_WEATHER_CONDITION));
-            mSingleDayObject.setMax(data.getDouble(COL_WEATHER_MAX_TEMP));
-            mSingleDayObject.setMin(data.getDouble(COL_WEATHER_MIN_TEMP));
-            mSingleDayObject.setDayOfWeek(WeatherUtils.getReadableDate(data.getLong(COL_WEATHER_DATE)));
-            mSingleDayObject.setDate(data.getLong(COL_WEATHER_DATE));
-            mSingleDayObject.setHumidity(data.getDouble(COL_HUMIDITY));
-            mSingleDayObject.setPressure(data.getDouble(COL_PRESSURE));
-            mSingleDayObject.setWindSpeed(data.getDouble(COL_WIND_SPEED));
-            mSingleDayObject.setWeatherConditionId(data.getLong(COL_WEATHER_CONDITION_ID));
-            mSingleDayObject.setDegree(data.getDouble(COL_DEGREE));
+            mWeather.setDescription(data.getString(COL_WEATHER_CONDITION));
+            mWeather.setMax(data.getDouble(COL_WEATHER_MAX_TEMP));
+            mWeather.setMin(data.getDouble(COL_WEATHER_MIN_TEMP));
+            mWeather.setDayOfWeek(WeatherUtils.getReadableDate(data.getLong(COL_WEATHER_DATE)));
+            mWeather.setDate(data.getLong(COL_WEATHER_DATE));
+            mWeather.setHumidity(data.getDouble(COL_HUMIDITY));
+            mWeather.setPressure(data.getDouble(COL_PRESSURE));
+            mWeather.setWindSpeed(data.getDouble(COL_WIND_SPEED));
+            mWeather.setWeatherConditionId(data.getLong(COL_WEATHER_CONDITION_ID));
+            mWeather.setDegree(data.getDouble(COL_DEGREE));
 
             bindViewsWithData();
         }
@@ -166,14 +167,14 @@ public class WeatherDetailsFragment extends Fragment implements LoaderManager.Lo
     }
 
     private void bindViewsWithData() {
-        mMaxTemp.setText(WeatherUtils.formatTemperature(mSingleDayObject.getMax()));
-        mMinTemp.setText(WeatherUtils.formatTemperature(mSingleDayObject.getMin()));
-        mDateText.setText(WeatherUtils.getFormattedMonthDay(mSingleDayObject.getDate()));
-        mHumidity.setText(new StringBuilder().append(String.valueOf(mSingleDayObject.getHumidity())).append("%").toString());
-        mPressure.setText(String.valueOf(mSingleDayObject.getPressure()));
-        mWindSpeed.setText(WeatherUtils.getFormattedWind(mSingleDayObject.getWindSpeed(), mSingleDayObject.getDegree()));
-        mWeatherCondition.setText(mSingleDayObject.getDescription());
-        mIconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(mSingleDayObject.getWeatherConditionId()));
+        mMaxTemp.setText(WeatherUtils.formatTemperature(mWeather.getMax()));
+        mMinTemp.setText(WeatherUtils.formatTemperature(mWeather.getMin()));
+        mDateText.setText(WeatherUtils.getFormattedMonthDay(mWeather.getDate()));
+        mHumidity.setText(new StringBuilder().append(String.valueOf(mWeather.getHumidity())).append("%").toString());
+        mPressure.setText(String.valueOf(mWeather.getPressure()));
+        mWindSpeed.setText(WeatherUtils.getFormattedWind(mWeather.getWindSpeed(), mWeather.getDegree()));
+        mWeatherCondition.setText(mWeather.getDescription());
+        mIconView.setImageResource(WeatherUtils.getArtResourceForWeatherCondition(mWeather.getWeatherConditionId()));
 
         getActivity().supportStartPostponedEnterTransition();
     }

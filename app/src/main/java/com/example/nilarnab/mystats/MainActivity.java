@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.example.nilarnab.mystats.fragments.WeatherDetailsFragment;
 import com.example.nilarnab.mystats.fragments.WeatherForecastFragment;
-import com.example.nilarnab.mystats.sync.SyncAdapter;
 import com.example.nilarnab.mystats.utility.Utility;
 
 public class MainActivity extends AppCompatActivity
@@ -68,11 +67,6 @@ public class MainActivity extends AppCompatActivity
             Intent settings = new Intent(this, SettingsActivity.class);
             startActivity(settings);
 
-            return true;
-        }
-
-        if (item.getItemId() == R.id.action_refresh) {
-            SyncAdapter.initWeatherSync();
             return true;
         }
 

@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.database.WeatherContract;
-import com.example.nilarnab.mystats.models.WeatherSingleDay;
+import com.example.nilarnab.mystats.models.Weather;
 import com.example.nilarnab.mystats.utility.WeatherUtils;
 
 
@@ -28,6 +28,21 @@ public class ForecastAdapter extends GenericRecyclerViewCursorAdapter<ForecastAd
         super(cursor);
         mContext = context;
         mListener = listener;
+    }
+
+    private static Weather getWeatherItem(Cursor c) {
+        Weather day = new Weather();
+        day.setDate(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_DATE)));
+        day.setDescription(c.getString(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_CONDITION)));
+        day.setMax(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MAX_TEMP)));
+        day.setMin(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MIN_TEMP)));
+        day.setWeatherConditionId(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID)));
+
+        String dayOfWeek = WeatherUtils.getFriendlyDayString(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_DATE)));
+
+        day.setDayOfWeek(dayOfWeek);
+
+        return day;
     }
 
     @Override
@@ -48,25 +63,10 @@ public class ForecastAdapter extends GenericRecyclerViewCursorAdapter<ForecastAd
         return position == 0 ? VIEW_TODAY : VIEW_FUTURE;
     }
 
-    private static WeatherSingleDay getWeatherItem(Cursor c) {
-        WeatherSingleDay day = new WeatherSingleDay();
-        day.setDate(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_DATE)));
-        day.setDescription(c.getString(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_CONDITION)));
-        day.setMax(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MAX_TEMP)));
-        day.setMin(c.getDouble(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_MIN_TEMP)));
-        day.setWeatherConditionId(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_WEATHER_CONDITION_ID)));
-
-        String dayOfWeek = WeatherUtils.getFriendlyDayString(c.getLong(c.getColumnIndex(WeatherContract.WeatherTable.COLUMN_DATE)));
-
-        day.setDayOfWeek(dayOfWeek);
-
-        return day;
-    }
-
     @Override
     public void onBindViewHolder(final WeatherListViewHolder holder, Cursor cursor) {
         if (cursor != null) {
-            final WeatherSingleDay day = getWeatherItem(cursor);
+            final Weather day = getWeatherItem(cursor);
 
             holder.desc.setText(day.getDescription());
             holder.dow.setText(day.getDayOfWeek());
@@ -100,12 +100,12 @@ public class ForecastAdapter extends GenericRecyclerViewCursorAdapter<ForecastAd
             parent = view.findViewById(R.id.list_item_parent);
         }
 
-        public void bindClickListener(ImageView iconView, TextView desc,TextView max,TextView min, WeatherSingleDay day) {
+        public void bindClickListener(ImageView iconView, TextView desc,TextView max,TextView min, Weather day) {
             mListener.onItemClicked(iconView,desc,max,min,day,getAdapterPosition());
         }
 
         public interface ItemClickListener {
-            void onItemClicked(ImageView icon, TextView desc,TextView max,TextView min, WeatherSingleDay day, int position);
+            void onItemClicked(ImageView icon, TextView desc, TextView max, TextView min, Weather day, int position);
         }
     }
 }

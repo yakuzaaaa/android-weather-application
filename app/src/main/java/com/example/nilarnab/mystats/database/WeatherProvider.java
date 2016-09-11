@@ -244,7 +244,7 @@ public class WeatherProvider extends ContentProvider {
     }
 
     @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
+    public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
         final SQLiteDatabase db = mDataBaseHelper.getWritableDatabase();
         final int match = mMatcher.match(uri);
         switch (match) {

@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
 
 import com.example.nilarnab.mystats.utility.Utility;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,6 +28,7 @@ public class LocationListenerService extends Service implements
 
     private GoogleApiClient mGoogleClient;
     private LocationRequest mLocationRequest;
+    private Location mLastLocation;
 
     @Nullable
     @Override
@@ -95,15 +95,18 @@ public class LocationListenerService extends Service implements
     }
 
     private void handleLocationUpdate(Location location) {
-        Utility.storeUserLocation(location);
-        stopSelf();
+        if(location != mLastLocation) {
+            Utility.storeUserLocation(location);
+            mLastLocation = location;
+        }
     }
 
 
     private void createLocationRequest() {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setFastestInterval(20);
+        mLocationRequest.setSmallestDisplacement(30);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
     @Override
@@ -124,7 +127,6 @@ public class LocationListenerService extends Service implements
     @Override
     public void onLocationChanged(Location location) {
         handleLocationUpdate(location);
-        Toast.makeText(this, String.format("lat %f, lng %f", location.getLatitude(), location.getLongitude()), Toast.LENGTH_LONG).show();
     }
 
     @Override
