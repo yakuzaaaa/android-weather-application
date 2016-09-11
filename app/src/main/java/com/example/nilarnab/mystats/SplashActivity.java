@@ -9,6 +9,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 import com.example.nilarnab.mystats.events.DataUpdatedEvent;
 import com.example.nilarnab.mystats.events.LocationFetchedEvent;
@@ -19,6 +23,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -27,10 +34,23 @@ public class SplashActivity extends AppCompatActivity {
     boolean mTimerExpired = false;
     Handler mHandler;
 
+    @BindView(R.id.loading_image) ImageView mImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ButterKnife.bind(this);
+
+        RotateAnimation rotateAnimation =
+                new RotateAnimation(0,360,Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setDuration(500);
+        rotateAnimation.setInterpolator(new AccelerateInterpolator(1.0f));
+        rotateAnimation.setRepeatCount(Animation.INFINITE);
+        mImageView.startAnimation(rotateAnimation);
+
+
+
         if (savedInstanceState != null) {
             mTimerExpired = true;
             switchActivity();
