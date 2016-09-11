@@ -99,12 +99,15 @@ public class DataFetchUtil {
             if (connection != null) {
                 connection.disconnect();
             }
+
+            EventBus.getDefault().post(new DataUpdatedEvent());
         }
 
         try {
             WeatherUtils.saveResultsToDb(resultJSON);
         } catch (JSONException e) {
             e.printStackTrace();
+            EventBus.getDefault().post(new DataUpdatedEvent());
         }
 
         EventBus.getDefault().post(new DataUpdatedEvent());

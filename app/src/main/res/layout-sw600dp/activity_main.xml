@@ -26,20 +26,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <FrameLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/main_activity_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"/>
+            android:id="@+id/details_activity_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"/>
 
         <FrameLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/details_activity_container"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2"/>
+            android:id="@+id/main_activity_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"/>
+
+
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

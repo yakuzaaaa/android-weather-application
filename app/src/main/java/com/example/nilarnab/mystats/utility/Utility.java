@@ -196,6 +196,10 @@ public class Utility {
         return getStringPreference(R.string.pref_pin_code, null);
     }
 
+    public static String getUserCity() {
+        return getStringPreference(R.string.pref_user_city, null);
+    }
+
     public static String getPreferredUnit() {
         return getStringPreference(R.string.pref_unit_key, context.getString(R.string.unit_metric));
     }
@@ -269,10 +273,19 @@ public class Utility {
                     if(addresses.size() > 0) {
                         String pin = addresses.get(0).getPostalCode();
                         if(pin != null) {
-                            if(!pin.equals(getUserLocation())) {
-                                Log.d(App.TAG,pin);
+                            if (!pin.equals(getUserLocation())) {
+                                Log.d(App.TAG, pin);
                                 storeStringPreference(context.getString(R.string.pref_pin_code), pin);
                                 hasChanged = true;
+                            }
+                            String city = addresses.get(0).getSubLocality();
+
+                            if (city == null) {
+                                city = addresses.get(0).getLocality();
+                            }
+
+                            if (city != null && !city.equals(getUserCity())) {
+                                storeStringPreference(context.getString(R.string.pref_user_city), city);
                             }
                         }
                     }

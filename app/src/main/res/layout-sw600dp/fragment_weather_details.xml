@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.GridLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@android:color/white"
+            app:columnCount="2">
+
+            <android.support.v7.widget.Space
+                app:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"/>
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/black"
+                app:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill_horizontal"
+                tools:text="Today, April 03"/>
+
+            <ImageView
+                android:id="@+id/weather_icon_view"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:adjustViewBounds="true"
+                android:transitionName="@string/detail_icon_transition_name"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill_horizontal"
+                tools:src="@drawable/art_clouds"/>
+
+            <TextView
+                android:id="@+id/tv_max_temp"
+                android:layout_width="0dp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/black"
+                android:textSize="72sp"
+                android:transitionName="@string/detail_max_transition_name"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill_horizontal"
+                tools:text="19"/>
+
+            <TextView
+                android:id="@+id/tv_weather_desc"
+                android:layout_width="0dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center_horizontal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/material_grey_500"
+                android:textSize="15sp"
+                android:transitionName="@string/detail_desc_transition_name"
+                app:layout_columnWeight="1"
+                tools:text="Rainy"/>
+
+            <TextView
+                android:id="@+id/tv_min_temp"
+                android:layout_width="0dp"
+                android:layout_marginBottom="@dimen/abc_list_item_padding_horizontal_material"
+                android:gravity="center_horizontal"
+                android:textColor="@color/material_grey_500"
+                android:textSize="36sp"
+                android:transitionName="@string/detail_min_transition_name"
+                app:layout_columnWeight="1"
+                tools:text="10"/>
+
+            <android.support.v7.widget.Space
+                app:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"/>
+
+        </android.support.v7.widget.GridLayout>
+
+        <android.support.v7.widget.GridLayout
+            android:id="@+id/details_additional_pane"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:background="@color/colorAccent"
+            android:padding="16dp"
+            app:columnCount="2">
+
+            <android.support.v7.widget.Space
+                app:layout_columnSpan="2"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="0.3"/>
+
+            <TextView
+                android:id="@+id/tv_wind_label"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:text="@string/wind_speed"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill"
+                app:layout_rowWeight="1"/>
+
+            <TextView
+                android:id="@+id/tv_wind"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_gravity="fill"
+                app:layout_rowWeight="1"
+                tools:text="100"/>
+
+            <TextView
+                android:id="@+id/tv_humidity_label"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="@string/humidity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill"
+                app:layout_rowWeight="1"
+                tools:text="Humidity"/>
+
+            <TextView
+                android:id="@+id/tv_humidity"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:text="@string/humidity"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill"
+                app:layout_rowWeight="1"/>
+
+
+            <TextView
+                android:id="@+id/tv_pressure_label"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/pressure"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_columnWeight="1"
+                app:layout_gravity="fill"
+                app:layout_rowWeight="1"/>
+
+            <TextView
+                android:id="@+id/tv_pressure"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/pressure"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@color/white"
+                app:layout_columnWeight="1"
+                app:layout_rowWeight="1"/>
+
+        </android.support.v7.widget.GridLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

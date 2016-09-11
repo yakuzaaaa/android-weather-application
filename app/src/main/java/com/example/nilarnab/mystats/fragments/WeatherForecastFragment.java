@@ -24,9 +24,7 @@ import com.example.nilarnab.mystats.R;
 import com.example.nilarnab.mystats.adapters.ForecastAdapter;
 import com.example.nilarnab.mystats.database.WeatherContract;
 import com.example.nilarnab.mystats.events.DataUpdatedEvent;
-import com.example.nilarnab.mystats.events.LocationFetchedEvent;
 import com.example.nilarnab.mystats.models.Weather;
-import com.example.nilarnab.mystats.services.DataFetchUtil;
 import com.example.nilarnab.mystats.sync.SyncAdapter;
 import com.example.nilarnab.mystats.utility.Utility;
 
@@ -55,6 +53,7 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
             WeatherContract.LocationTable.COLUMN_COORD_LAT,
             WeatherContract.LocationTable.COLUMN_COORD_LNG
     };
+    private static final long SWIPE_REFRESH_MAX_WAIT = 60000;
     @BindView(R.id.weather_list) RecyclerView mRecyclerView;
     @BindView(R.id.empty_view) View mEmptyView;
     @BindView(R.id.weather_refresh) SwipeRefreshLayout mSwipeRefreshWeather;
@@ -113,6 +112,13 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
             }
         });
 
+        mSwipeRefreshWeather.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideSwipeRefresh();
+            }
+        }, SWIPE_REFRESH_MAX_WAIT);
+
         return rootView;
     }
 
@@ -170,17 +176,6 @@ public class WeatherForecastFragment extends Fragment implements LoaderManager.L
                 }
             });
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND, sticky = true)
-    public void locationFetchedEvent(LocationFetchedEvent event) {
-        if (event.isChangedLocation()) {
-            DataFetchUtil.fetchDataNow();
-        } else {
-            hideSwipeRefresh();
-        }
-
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.example.nilarnab.mystats;
 
 import android.app.NotificationManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -20,7 +21,9 @@ import com.example.nilarnab.mystats.fragments.WeatherForecastFragment;
 import com.example.nilarnab.mystats.utility.Utility;
 
 public class MainActivity extends AppCompatActivity
-        implements WeatherForecastFragment.listener {
+        implements
+        WeatherForecastFragment.listener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String FORECAST_FRAGMENT = WeatherForecastFragment.class.getSimpleName();
 
     private boolean mTwoPaneMode = false;
@@ -31,6 +34,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (Utility.getUserCity() != null) {
+            toolbar.setTitle(Utility.getUserCity());
+        }
         setSupportActionBar(toolbar);
 
         getSupportFragmentManager().beginTransaction()
@@ -56,6 +62,17 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        App.getAppPreference().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        App.getAppPreference().unregisterOnSharedPreferenceChangeListener(this);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,6 +107,15 @@ public class MainActivity extends AppCompatActivity
                     );
 
             ActivityCompat.startActivity(this,Utility.getWeatherDetailsIntent(uri),activityOptionsCompat.toBundle());
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key == getString(R.string.pref_user_city)) {
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(Utility.getUserCity());
+            }
         }
     }
 }
