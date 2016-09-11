@@ -95,12 +95,35 @@
         <android.support.v7.widget.Space
             app:layout_columnSpan="2"
             app:layout_columnWeight="1"
+            app:layout_rowWeight="0.3"/>
+
+        <TextView
+            android:id="@+id/tv_wind_label"
+            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:text="@string/wind_speed"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_columnWeight="1"
+            app:layout_gravity="fill"
             app:layout_rowWeight="1"/>
+
+        <TextView
+            android:id="@+id/tv_wind"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/white"
+            app:layout_gravity="fill"
+            app:layout_rowWeight="1"
+            tools:text="100"/>
 
         <TextView
             android:id="@+id/tv_humidity_label"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:text="@string/humidity"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/white"
@@ -113,6 +136,7 @@
             android:id="@+id/tv_humidity"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
+            android:gravity="center"
             android:text="@string/humidity"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/white"
@@ -120,29 +144,11 @@
             app:layout_gravity="fill"
             app:layout_rowWeight="1"/>
 
-        <TextView
-            android:id="@+id/tv_wind_label"
-            android:layout_width="wrap_content"
-            android:text="@string/wind_speed"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/white"
-            app:layout_columnWeight="1"
-            app:layout_gravity="fill"
-            app:layout_rowWeight="1"/>
-
-        <TextView
-            android:id="@+id/tv_wind"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:textColor="@color/white"
-            app:layout_gravity="fill"
-            app:layout_rowWeight="1"
-            tools:text="100"/>
 
         <TextView
             android:id="@+id/tv_pressure_label"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/pressure"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/white"
@@ -153,6 +159,7 @@
         <TextView
             android:id="@+id/tv_pressure"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/pressure"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/white"
