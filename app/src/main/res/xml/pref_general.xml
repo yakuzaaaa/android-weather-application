@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/header_weather_settings">
+        <ListPreference
+            android:defaultValue="@string/temperature_units_default_value"
+            android:dialogTitle="@string/title_list_preference_units_temperature"
+            android:entries="@array/entries_list_preference_temp_units"
+            android:entryValues="@array/entryvalues_list_preference_temp_units"
+            android:icon="@drawable/ic_assignment_black_24dp"
+            android:key="@string/pref_unit_key"
+            android:title="@string/title_list_preference_units_temperature"/>
+    </PreferenceCategory>
+</PreferenceScreen>
